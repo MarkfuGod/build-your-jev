@@ -1,5 +1,7 @@
 # Build Your Jev
 
+[English](README.en.md) · 中文
+
 在 Apple Silicon 上，用公开的 Qwen3.5-4B 做一个本地 Jev 式语义判断器。
 
 输入是一份 `state` 和一组带类型的问题。输出是 `choice`、`score` 或 `noul` 的概率。模型一次读完材料，直接读取候选答案的 logits，不生成解释文字。
