@@ -257,8 +257,3 @@ uv run python examples/run_scenario_suite.py
 ```bash
 JEV_RUN_MODEL=1 uv run python -m unittest tests.test_jev_like
 ```
-
-## 发布文案
-
-- [小红书版本](posts/xiaohongshu.zh-CN.md)
-- [Blog 长文版本](posts/blog.zh-CN.md)
