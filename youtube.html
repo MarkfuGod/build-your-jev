@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Click a YouTube video</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { margin: 0 auto; max-width: 980px; padding: 24px; line-height: 1.4; }
+    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    p { color: #555; }
+    form, .videos { display: grid; gap: 8px; margin: 16px 0; }
+    .videos { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    input { font: inherit; padding: 8px; }
+    button { font: inherit; text-align: left; padding: 10px; cursor: pointer; }
+    .layout { display: grid; gap: 20px; }
+    @media (min-width: 800px) { .layout { grid-template-columns: 1.2fr 0.8fr; } }
+    iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; background: #111; }
+    .decision { margin: 0 0 16px; }
+    .decision h3 { margin: 0 0 8px; font-size: 1rem; }
+    .row { display: grid; grid-template-columns: 92px 1fr 48px; gap: 8px; align-items: center; margin: 4px 0; }
+    .track { height: 8px; background: #ddd; }
+    .fill { height: 100%; background: #c23b6e; }
+    [aria-pressed="true"] { outline: 2px solid #c23b6e; }
+    #status { min-height: 1.4em; }
+  </style>
+</head>
+<body>
+  <h1>Click a YouTube video</h1>
+  <p>The player is the real YouTube video. The decision beside it comes from the local model reading only the public title and channel.</p>
+  <form id="link-form">
+    <label for="url">Or paste any YouTube link</label>
+    <input id="url" name="url" type="url" placeholder="https://www.youtube.com/watch?v=…" required>
+    <button type="submit">Read this link</button>
+  </form>
+  <div class="videos">
+    <button type="button" data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Never Gonna Give You Up</button>
+    <button type="button" data-url="https://www.youtube.com/watch?v=_uQrJ0TkZlc">Python Full Course</button>
+    <button type="button" data-url="https://www.youtube.com/watch?v=jNQXAC9IVRw">Me at the zoo</button>
+    <button type="button" data-url="https://www.youtube.com/watch?v=kJQP7kiw5Fk">Despacito</button>
+  </div>
+  <p id="status" role="status"></p>
+  <div class="layout">
+    <section>
+      <iframe id="player" title="Selected YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <h2 id="title">No video selected</h2>
+      <p id="channel"></p>
+      <p><a id="watch" href="https://www.youtube.com/" target="_blank" rel="noopener">Open on YouTube</a></p>
+    </section>
+    <section id="decisions" aria-live="polite"></section>
+  </div>
+  <script>
+    const status = document.querySelector("#status");
+    const decisions = document.querySelector("#decisions");
+    const player = document.querySelector("#player");
+    const title = document.querySelector("#title");
+    const channel = document.querySelector("#channel");
+    const watch = document.querySelector("#watch");
+    let current = null;
+
+    function percent(value) {
+      return `${(value * 100).toFixed(1)}%`;
+    }
+
+    function addBar(parent, label, probability) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const name = document.createElement("span");
+      name.textContent = label;
+      const track = document.createElement("div");
+      track.className = "track";
+      const fill = document.createElement("div");
+      fill.className = "fill";
+      fill.style.width = `${Math.max(0, Math.min(100, probability * 100))}%`;
+      track.append(fill);
+      const value = document.createElement("span");
+      value.textContent = percent(probability);
+      row.append(name, track, value);
+      parent.append(row);
+    }
+
+    function renderAnswer(name, answer) {
+      const block = document.createElement("section");
+      block.className = "decision";
+      const heading = document.createElement("h3");
+      if (answer.type === "choice") heading.textContent = `${name}: ${answer.choice}`;
+      else if (answer.type === "noul") heading.textContent = `${name}: ${percent(answer.noul)} yes`;
+      else heading.textContent = `${name}: ${answer.score.toFixed(2)}`;
+      block.append(heading);
+      if (answer.type === "noul") addBar(block, "yes", answer.noul);
+      else {
+        for (const [label, probability] of Object.entries(answer.probabilities)) {
+          const shown = answer.legend ? answer.legend[label] : label;
+          addBar(block, shown, probability);
+        }
+        const note = document.createElement("p");
+        note.textContent = `Concentration ${answer.confidence.toFixed(2)}. This is not calibrated accuracy.`;
+        block.append(note);
+      }
+      return block;
+    }
+
+    async function readVideo(url, button) {
+      document.querySelectorAll("[data-url]").forEach((item) => item.setAttribute("aria-pressed", "false"));
+      if (button) button.setAttribute("aria-pressed", "true");
+      current = url;
+      status.textContent = "Reading the video…";
+      decisions.replaceChildren();
+      try {
+        const response = await fetch("/youtube", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const body = await response.json();
+        if (current !== url) return;
+        if (!response.ok) throw new Error(body.error?.message || "The video could not be read");
+        player.src = body.video.embed_url;
+        title.textContent = body.video.title;
+        channel.textContent = body.video.channel;
+        watch.href = body.video.watch_url;
+        watch.textContent = "Open this video on YouTube";
+        decisions.append(...Object.entries(body.answers).map(([name, answer]) => renderAnswer(name, answer)));
+        status.textContent = "Decision ready.";
+      } catch (error) {
+        if (current !== url) return;
+        status.textContent = error.message;
+      }
+    }
+
+    document.querySelectorAll("[data-url]").forEach((button) => {
+      button.addEventListener("click", () => readVideo(button.dataset.url, button));
+    });
+    document.querySelector("#link-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      readVideo(document.querySelector("#url").value, null);
+    });
+  </script>
+</body>
+</html>

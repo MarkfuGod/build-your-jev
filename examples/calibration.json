@@ -1,0 +1,33 @@
+{
+  "method": "temperature scaling, negative log-likelihood, one temperature per question type",
+  "source": "examples/scenario_suite_results_temperature1.json",
+  "split": "leave one scenario out, then refit on all ten scenarios for the deployed values",
+  "deployed": {
+    "noul": 0.6882,
+    "choice": 1.0,
+    "score": 2.9052
+  },
+  "choice_note": "The likelihood minimum for choice was 1.0329. Held-out likelihood got worse, so choice stays at 1.",
+  "leave_one_scenario_out": {
+    "noul": {
+      "temperature_range": [0.628, 0.715],
+      "nll": [0.149, 0.1386],
+      "ece": [0.0704, 0.0561]
+    },
+    "choice": {
+      "temperature_range": [0.968, 1.089],
+      "nll": [0.2253, 0.2284],
+      "ece": [0.0771, 0.078]
+    },
+    "score": {
+      "temperature_range": [2.661, 3.115],
+      "nll": [1.1714, 1.0003],
+      "ece": [0.2605, 0.1646]
+    }
+  },
+  "noul_gate_after_calibration": {
+    "0.5": {"precision": 0.972, "recall": 0.919, "false_positives": 5},
+    "0.8": {"precision": 0.988, "recall": 0.849, "false_positives": 2},
+    "0.9": {"precision": 0.993, "recall": 0.806, "false_positives": 1}
+  }
+}

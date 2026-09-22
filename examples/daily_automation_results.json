@@ -1,0 +1,619 @@
+[
+  {
+    "id": "invoice-mail",
+    "name": "发票邮件归档",
+    "state": "主题：3月云服务发票已开具。正文：发票号 INV-2031，金额 1280 元，付款截止日期 4月2日。请财务归档，无需工程处理。",
+    "questions": {
+      "route": {
+        "type": "choice",
+        "instructions": "这封邮件应该交给谁？",
+        "criteria": {
+          "finance": "发票、付款、报销或归档",
+          "engineering": "故障、部署或技术问题",
+          "personal": "私人事务"
+        }
+      },
+      "needs_reply": {
+        "type": "noul",
+        "instructions": "需要回复发件人吗？",
+        "criteria": {
+          "true": "发件人在等待一个答复",
+          "false": "只是通知，归档即可"
+        }
+      },
+      "urgency": {
+        "type": "score",
+        "instructions": "处理有多急？",
+        "criteria": [
+          "不急",
+          "本周处理",
+          "今天处理"
+        ]
+      }
+    },
+    "elapsed_seconds": 0.749,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "route": {
+          "type": "choice",
+          "choice": "finance",
+          "probabilities": {
+            "finance": 0.9958814579125984,
+            "engineering": 0.0027972260574205105,
+            "personal": 0.0013213160299810661
+          },
+          "confidence": 0.9938221868688977
+        },
+        "needs_reply": {
+          "type": "noul",
+          "noul": 0.04208772791561884
+        },
+        "urgency": {
+          "type": "score",
+          "score": 0.05119144968700656,
+          "legend": {
+            "0": "不急",
+            "1": "本周处理",
+            "2": "今天处理"
+          },
+          "probabilities": {
+            "0": 0.9643965690374765,
+            "1": 0.020015412238040587,
+            "2": 0.015588018724482988
+          },
+          "confidence": 0.9465948535562148
+        }
+      },
+      "usage": {
+        "input_tokens": 442,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "calendar-conflict",
+    "name": "会议和已有预约冲突",
+    "state": "周四 15:00-16:00 已经有牙医预约。新邀请：周四 15:30 产品评审，组织者是直属老板，不参加需要请假。",
+    "questions": {
+      "action": {
+        "type": "choice",
+        "instructions": "自动化日程应该怎么处理这个邀请？",
+        "criteria": {
+          "accept": "直接接受并覆盖原预约",
+          "decline": "直接拒绝",
+          "propose_new_time": "不直接接受，提议改时间或先请假"
+        }
+      },
+      "conflicts": {
+        "type": "noul",
+        "instructions": "新邀请和已有日程冲突吗？",
+        "criteria": {
+          "true": "时间重叠",
+          "false": "时间不重叠"
+        }
+      }
+    },
+    "elapsed_seconds": 0.564,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "propose_new_time",
+          "probabilities": {
+            "accept": 0.00406595347580363,
+            "decline": 0.001028034033383094,
+            "propose_new_time": 0.9949060124908133
+          },
+          "confidence": 0.9923590187362201
+        },
+        "conflicts": {
+          "type": "noul",
+          "noul": 0.9324533088603709
+        }
+      },
+      "usage": {
+        "input_tokens": 295,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "smart-home",
+    "name": "晚归时的灯光",
+    "state": "用户说：我大概十一点到家，客厅太暗了，别把卧室灯打开。",
+    "questions": {
+      "living_room": {
+        "type": "choice",
+        "instructions": "到家时客厅灯怎么设置？",
+        "criteria": {
+          "on": "打开",
+          "dim": "调暗",
+          "off": "保持关闭"
+        }
+      },
+      "bedroom": {
+        "type": "choice",
+        "instructions": "到家时卧室灯怎么设置？",
+        "criteria": {
+          "on": "打开",
+          "off": "保持关闭"
+        }
+      },
+      "late_arrival": {
+        "type": "noul",
+        "instructions": "用户是不是晚归？",
+        "criteria": {
+          "true": "到家时间很晚",
+          "false": "不是晚归"
+        }
+      }
+    },
+    "elapsed_seconds": 0.578,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "living_room": {
+          "type": "choice",
+          "choice": "dim",
+          "probabilities": {
+            "on": 0.3439948618000744,
+            "dim": 0.642667009935445,
+            "off": 0.013338128264480574
+          },
+          "confidence": 0.4640005149031675
+        },
+        "bedroom": {
+          "type": "choice",
+          "choice": "off",
+          "probabilities": {
+            "on": 0.005911068856243796,
+            "off": 0.9940889311437562
+          },
+          "confidence": 0.9881778622875124
+        },
+        "late_arrival": {
+          "type": "noul",
+          "noul": 0.9840936082881853
+        }
+      },
+      "usage": {
+        "input_tokens": 342,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "delivery-failure",
+    "name": "快递投递失败",
+    "state": "顺丰通知：您的包裹因地址不详投递失败，今天 18:00 前不更新地址将退回寄件人。",
+    "questions": {
+      "action": {
+        "type": "choice",
+        "instructions": "下一步应该做什么？",
+        "criteria": {
+          "update_address": "今天截止前更新地址",
+          "wait": "先等等，不采取行动",
+          "ignore": "不用处理"
+        }
+      },
+      "deadline_today": {
+        "type": "noul",
+        "instructions": "今天不处理会有实际后果吗？",
+        "criteria": {
+          "true": "今天有截止时间，过了会退回",
+          "false": "没有今天的后果"
+        }
+      },
+      "risk": {
+        "type": "score",
+        "instructions": "包裹被退回的风险有多高？",
+        "criteria": [
+          "低",
+          "中",
+          "高"
+        ]
+      }
+    },
+    "elapsed_seconds": 0.625,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "update_address",
+          "probabilities": {
+            "update_address": 0.999607997344225,
+            "wait": 0.0002959286797364449,
+            "ignore": 9.60739760385357e-05
+          },
+          "confidence": 0.9994119960163375
+        },
+        "deadline_today": {
+          "type": "noul",
+          "noul": 0.9980732653366725
+        },
+        "risk": {
+          "type": "score",
+          "score": 1.7393118737620075,
+          "legend": {
+            "0": "低",
+            "1": "中",
+            "2": "高"
+          },
+          "probabilities": {
+            "0": 0.11571535173806778,
+            "1": 0.02925742276185712,
+            "2": 0.8550272255000751
+          },
+          "confidence": 0.7825408382501127
+        }
+      },
+      "usage": {
+        "input_tokens": 391,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "utility-bill",
+    "name": "电费扣款提醒",
+    "state": "供电公司短信：户号 8831 电费 246 元，扣款日是明天，账户余额不足可能会停电。",
+    "questions": {
+      "action": {
+        "type": "choice",
+        "instructions": "缴费自动化应该怎么做？",
+        "criteria": {
+          "pay_now": "现在付款",
+          "remind_tomorrow": "明天再提醒",
+          "ignore": "忽略"
+        }
+      },
+      "outage_risk": {
+        "type": "noul",
+        "instructions": "不付款有停电风险吗？",
+        "criteria": {
+          "true": "短信说明余额不足可能停电",
+          "false": "没有停电风险"
+        }
+      }
+    },
+    "elapsed_seconds": 0.445,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "action": {
+          "type": "choice",
+          "choice": "pay_now",
+          "probabilities": {
+            "pay_now": 0.8805945005200205,
+            "remind_tomorrow": 0.10517201503645543,
+            "ignore": 0.014233484443523983
+          },
+          "confidence": 0.8208917507800308
+        },
+        "outage_risk": {
+          "type": "noul",
+          "noul": 0.9988304897349445
+        }
+      },
+      "usage": {
+        "input_tokens": 261,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "family-hospital",
+    "name": "家庭群里的医院复查",
+    "state": "妈妈在家庭群说：你爸明天复查，早上 8 点要有人开车去医院，你姐在外地。",
+    "questions": {
+      "driver": {
+        "type": "choice",
+        "instructions": "谁应该负责开车？",
+        "criteria": {
+          "me": "收到消息的人，姐姐在外地",
+          "sister": "姐姐",
+          "either": "谁都可以"
+        }
+      },
+      "act_today": {
+        "type": "noul",
+        "instructions": "今天就需要确认安排吗？",
+        "criteria": {
+          "true": "明天一早出发，今天要定下来",
+          "false": "还可以再等"
+        }
+      },
+      "urgency": {
+        "type": "score",
+        "instructions": "这件事有多急？",
+        "criteria": [
+          "不急",
+          "尽快确认",
+          "马上处理"
+        ]
+      }
+    },
+    "elapsed_seconds": 0.625,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "driver": {
+          "type": "choice",
+          "choice": "sister",
+          "probabilities": {
+            "me": 0.14433395511320982,
+            "sister": 0.8305845643329681,
+            "either": 0.02508148055382201
+          },
+          "confidence": 0.7458768464994523
+        },
+        "act_today": {
+          "type": "noul",
+          "noul": 0.9669140216112958
+        },
+        "urgency": {
+          "type": "score",
+          "score": 1.7778884628888645,
+          "legend": {
+            "0": "不急",
+            "1": "尽快确认",
+            "2": "马上处理"
+          },
+          "probabilities": {
+            "0": 0.031378692889538345,
+            "1": 0.15935415133205877,
+            "2": 0.8092671557784029
+          },
+          "confidence": 0.7139007336676044
+        }
+      },
+      "usage": {
+        "input_tokens": 378,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "refund-ticket",
+    "name": "退款工单",
+    "state": "客户：耳机收到就是坏的，我要全额退款。订单 1044，昨天已经寄回。",
+    "questions": {
+      "team": {
+        "type": "choice",
+        "instructions": "工单应该路由给哪个队列？",
+        "criteria": {
+          "refunds": "退款、退货或订单金额",
+          "technical": "产品使用或故障排查",
+          "shipping": "物流查询，货物还在路上"
+        }
+      },
+      "refund_requested": {
+        "type": "noul",
+        "instructions": "客户明确要求退款了吗？",
+        "criteria": {
+          "true": "明确说了退款",
+          "false": "没有要求退款"
+        }
+      },
+      "frustration": {
+        "type": "score",
+        "instructions": "客户有多不满？",
+        "criteria": [
+          "平静",
+          "不满",
+          "非常生气"
+        ]
+      }
+    },
+    "elapsed_seconds": 0.659,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "team": {
+          "type": "choice",
+          "choice": "refunds",
+          "probabilities": {
+            "refunds": 0.9813294098837572,
+            "technical": 0.017973675102325504,
+            "shipping": 0.0006969150139174165
+          },
+          "confidence": 0.9719941148256357
+        },
+        "refund_requested": {
+          "type": "noul",
+          "noul": 0.9902915235185259
+        },
+        "frustration": {
+          "type": "score",
+          "score": 1.7737822579201443,
+          "legend": {
+            "0": "平静",
+            "1": "不满",
+            "2": "非常生气"
+          },
+          "probabilities": {
+            "0": 0.0240937682868484,
+            "1": 0.17803020550615906,
+            "2": 0.7978760262069926
+          },
+          "confidence": 0.6968140393104889
+        }
+      },
+      "usage": {
+        "input_tokens": 373,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "commute",
+    "name": "出门提醒",
+    "state": "现在 7:40。9:00 有一场市区会议，平时通勤 50 分钟，外面正在下大雨。",
+    "questions": {
+      "leave": {
+        "type": "choice",
+        "instructions": "提醒助手现在该说什么？",
+        "criteria": {
+          "leave_now": "建议马上出门",
+          "leave_later": "还可以再等二十分钟",
+          "skip": "不用提醒"
+        }
+      },
+      "late_risk": {
+        "type": "noul",
+        "instructions": "按现在的时间，迟到风险高吗？",
+        "criteria": {
+          "true": "通勤加上下雨，剩余时间偏紧",
+          "false": "时间很充裕"
+        }
+      }
+    },
+    "elapsed_seconds": 0.444,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "leave": {
+          "type": "choice",
+          "choice": "leave_later",
+          "probabilities": {
+            "leave_now": 0.2760901419581639,
+            "leave_later": 0.6623058204513083,
+            "skip": 0.06160403759052784
+          },
+          "confidence": 0.49345873067696244
+        },
+        "late_risk": {
+          "type": "noul",
+          "noul": 0.9933071490757153
+        }
+      },
+      "usage": {
+        "input_tokens": 269,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "phishing-sms",
+    "name": "可疑银行短信",
+    "state": "短信：【银行】您的账户异常，请立即点击 http://pay-secure-cn.co/login 验证，否则 30 分钟内冻结。",
+    "questions": {
+      "verdict": {
+        "type": "choice",
+        "instructions": "这条短信应该怎么判定？",
+        "criteria": {
+          "phishing": "钓鱼或诈骗，不该点击",
+          "legitimate": "正规银行通知，可以点击",
+          "uncertain": "信息不足，交给人判断"
+        }
+      },
+      "block_link": {
+        "type": "noul",
+        "instructions": "应该阻止用户打开链接吗？",
+        "criteria": {
+          "true": "链接或话术像诈骗",
+          "false": "链接可以打开"
+        }
+      },
+      "risk": {
+        "type": "score",
+        "instructions": "风险有多高？",
+        "criteria": [
+          "低",
+          "中",
+          "高"
+        ]
+      }
+    },
+    "elapsed_seconds": 0.671,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "verdict": {
+          "type": "choice",
+          "choice": "phishing",
+          "probabilities": {
+            "phishing": 0.9998637554696752,
+            "legitimate": 5.143785109888947e-05,
+            "uncertain": 8.480667922584502e-05
+          },
+          "confidence": 0.9997956332045128
+        },
+        "block_link": {
+          "type": "noul",
+          "noul": 0.9975273768433653
+        },
+        "risk": {
+          "type": "score",
+          "score": 1.9333900551270822,
+          "legend": {
+            "0": "低",
+            "1": "中",
+            "2": "高"
+          },
+          "probabilities": {
+            "0": 0.02555502066500204,
+            "1": 0.015499903542913666,
+            "2": 0.9589450757920842
+          },
+          "confidence": 0.9384176136881264
+        }
+      },
+      "usage": {
+        "input_tokens": 397,
+        "output_tokens": 0
+      }
+    }
+  },
+  {
+    "id": "return-window",
+    "name": "退货期限",
+    "state": "订单是一件羽绒服，签收已经 12 天。店铺规则写明 7 天内可无理由退货。用户说衣服不合适，想退。",
+    "questions": {
+      "eligible": {
+        "type": "noul",
+        "instructions": "现在还在无理由退货期内吗？",
+        "criteria": {
+          "true": "签收天数不超过 7 天",
+          "false": "已经超过 7 天"
+        }
+      },
+      "action": {
+        "type": "choice",
+        "instructions": "退货流程下一步做什么？",
+        "criteria": {
+          "auto_approve": "自动批准无理由退货",
+          "ask_human": "交给人工，因为规则边界不清楚",
+          "reject": "无理由退货期限已过，拒绝该申请"
+        }
+      }
+    },
+    "elapsed_seconds": 0.49,
+    "response": {
+      "model": "local-qwen3.5-4b-jevlike",
+      "answers": {
+        "eligible": {
+          "type": "noul",
+          "noul": 0.008577485413711986
+        },
+        "action": {
+          "type": "choice",
+          "choice": "reject",
+          "probabilities": {
+            "auto_approve": 0.003529195401440533,
+            "ask_human": 0.017922733112604002,
+            "reject": 0.9785480714859556
+          },
+          "confidence": 0.9678221072289332
+        }
+      },
+      "usage": {
+        "input_tokens": 278,
+        "output_tokens": 0
+      }
+    }
+  }
+]

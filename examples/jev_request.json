@@ -1,0 +1,32 @@
+{
+  "model": "jev-latest",
+  "state": "Help! My payouts have been failing for 3 days.",
+  "questions": {
+    "is_urgent": {
+      "type": "noul",
+      "instructions": "Does this message convey urgency?",
+      "criteria": {
+        "true": "Explicitly time-sensitive or prolonged impact",
+        "false": "No urgency or ongoing impact expressed"
+      }
+    },
+    "department": {
+      "type": "choice",
+      "instructions": "Which team should handle this request?",
+      "criteria": {
+        "billing": "Payments, invoicing, refunds, or payouts",
+        "technical": "Bugs, outages, or integrations",
+        "sales": "Pricing, upgrades, or new accounts"
+      }
+    },
+    "frustration": {
+      "type": "score",
+      "instructions": "How frustrated is the customer?",
+      "criteria": [
+        "Calm",
+        "Frustrated",
+        "Very angry"
+      ]
+    }
+  }
+}

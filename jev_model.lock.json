@@ -1,0 +1,14 @@
+{
+  "source": "mlx-community/Qwen3.5-4B-OptiQ-4bit",
+  "revision": "6cb5bdfd0bf15f484881fb9f1ab6d7c840fddde9",
+  "base_model": "Qwen/Qwen3.5-4B",
+  "base_model_release_year": 2026,
+  "license": "Apache-2.0",
+  "quantization": "OptiQ mixed 4/8-bit MLX",
+  "files": {
+    "model.safetensors": {
+      "bytes": 3269669552,
+      "sha256": "5d59fea455202270c0f7f71a1902516b06457df5600c3182e1ff9163c33287c1"
+    }
+  }
+}

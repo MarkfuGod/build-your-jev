@@ -1,0 +1,11 @@
+[project]
+name = "build-your-jev"
+version = "0.2.0"
+description = "Build a local Jev-style typed decision model on Apple Silicon"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "mlx-optiq>=0.3.2",
+  "mlx-lm @ git+https://github.com/ml-explore/mlx-lm.git@a63e24c389382619eb6d9af656e3b46024be217a",
+  "huggingface_hub",
+  "pillow",
+]

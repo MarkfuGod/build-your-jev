@@ -1,0 +1,4 @@
+mlx-optiq>=0.3.2
+mlx-lm @ git+https://github.com/ml-explore/mlx-lm.git@a63e24c389382619eb6d9af656e3b46024be217a
+huggingface_hub
+pillow
